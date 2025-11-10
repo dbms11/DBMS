@@ -1,0 +1,47 @@
+a) Count the number of female (F) and male (M) respondents
+// Map function
+var mapGender = function() {
+    emit(this.gender, 1); // key = gender, value = 1
+};
+
+// Reduce function
+var reduceGender = function(key, values) {
+    return Array.sum(values); // sum all counts
+};
+
+// Execute map-reduce
+db.orders.mapReduce(
+    mapGender,
+    reduceGender,
+    { out: "gender_count" } // output collection
+)
+
+// View results
+db.gender_count.find()
+
+
+✅ This will give an output like:
+
+{ "_id" : "F", "value" : 15 }
+{ "_id" : "M", "value" : 10 }
+
+b) Count the number of each rating (1–5)
+// Map function
+var mapRating = function() {
+    emit(this.rating, 1); // key = rating, value = 1
+};
+
+// Reduce function
+var reduceRating = function(key, values) {
+    return Array.sum(values); // sum all counts
+};
+
+// Execute map-reduce
+db.orders.mapReduce(
+    mapRating,
+    reduceRating,
+    { out: "rating_count" } // output collection
+)
+
+// View results
+db.rating_count.find()

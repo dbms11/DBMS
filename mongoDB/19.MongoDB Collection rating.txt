@@ -1,0 +1,53 @@
+// ==========================================
+// Use or Create Database
+// ==========================================
+use movie_db;
+
+// ==========================================
+// Create collection "rating" and insert documents
+// ==========================================
+db.rating.insertMany([
+  { movie_id: 101, user_id: 11, title: "Toy Story (1995)", status: "A" },
+  { movie_id: 102, user_id: 12, title: "Finding Nemo (2003)", status: "A" },
+  { movie_id: 103, user_id: 13, title: "Avatar (2009)", status: "B" },
+  { movie_id: 104, user_id: 14, title: "The Lion King (1994)", status: "A" },
+  { movie_id: 105, user_id: 15, title: "Frozen (2013)", status: "A" }
+]);
+
+// ==========================================
+// a) Create an index on movie_id (Ascending) & verify query plan
+// ==========================================
+print("Creating ascending index on movie_id:");
+db.rating.createIndex({ movie_id: 1 });
+
+// Verify the query plan for an indexed search
+print("Query plan using the index:");
+db.rating.find({ movie_id: 101 }).explain("executionStats");
+
+// ==========================================
+// b) Show all indexes created on 'rating' collection
+// ==========================================
+print("All Indexes in 'rating' collection:");
+db.rating.getIndexes();
+
+// ==========================================
+// c) Sort movie_id in descending order
+// ==========================================
+print("Movies sorted by movie_id (Descending):");
+db.rating.find().sort({ movie_id: -1 }).pretty();
+
+// ==========================================
+// d) Create descending order index on movie_id & verify query plan
+// ==========================================
+print("Creating descending index on movie_id:");
+db.rating.createIndex({ movie_id: -1 });
+
+// Find movie with title = “Toy Story (1995)” using this index
+print("Query plan for Toy Story (1995) with descending index:");
+db.rating.find({ title: "Toy Story (1995)" }).sort({ movie_id: -1 }).explain("executionStats");
+
+// ==========================================
+// e) Limit the number of items in the result of above query
+// ==========================================
+print("Limiting the query result to 2 items:");
+db.rating.find().sort({ movie_id: -1 }).limit(2).pretty();

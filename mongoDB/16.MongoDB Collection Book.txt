@@ -1,0 +1,89 @@
+// 1️⃣ Use or create the database
+use library_db;
+
+// 2️⃣ Create and insert 5 Book documents
+db.Book.insertMany([
+  {
+    book_isbn: "ISBN001",
+    title: "DBMS Concepts",
+    publisher_name: "Pearson",
+    author: {
+      name: "Korth",
+      address: "New York",
+      phone_no: { landline: "020-2456789", mobile: "9876543210" }
+    },
+    publisher_city: "Delhi",
+    price: 550,
+    copies: 12
+  },
+  {
+    book_isbn: "ISBN002",
+    title: "Operating Systems",
+    publisher_name: "McGraw Hill",
+    author: {
+      name: "Silberschatz",
+      address: "Boston",
+      phone_no: { landline: "021-4567890", mobile: "8765432109" }
+    },
+    publisher_city: "Mumbai",
+    price: 600,
+    copies: 10
+  },
+  {
+    book_isbn: "ISBN003",
+    title: "Data Science Essentials",
+    publisher_name: "Wiley",
+    author: {
+      name: "Andrew Ng",
+      address: "California",
+      phone_no: { landline: "022-3456789", mobile: "7654321098" }
+    },
+    publisher_city: "Pune",
+    price: 750,
+    copies: 8
+  },
+  {
+    book_isbn: "ISBN004",
+    title: "Deep Learning with Python",
+    publisher_name: "Pearson",
+    author: {
+      name: "François Chollet",
+      address: "Paris",
+      phone_no: { landline: "023-4567123", mobile: "9543210786" }
+    },
+    publisher_city: "Delhi",
+    price: 900,
+    copies: 15
+  },
+  {
+    book_isbn: "ISBN005",
+    title: "Database Design",
+    publisher_name: "TMH",
+    author: {
+      name: "Elmasri",
+      address: "London",
+      phone_no: { landline: "024-9876543", mobile: "9988776655" }
+    },
+    publisher_city: "Pune",
+    price: 650,
+    copies: 9
+  }
+]);
+
+// 3️⃣ Display all documents
+db.Book.find().pretty();
+
+// 4️⃣ a) Books whose publisher lives in “Pune”
+db.Book.find({ publisher_city: "Pune" }).pretty();
+
+// 5️⃣ b) Delete books whose title starts with “D”
+db.Book.deleteMany({ title: { $regex: /^D/i } });
+
+// 6️⃣ c) Update publisher city of “Pearson” to “Pune”
+db.Book.updateMany(
+  { publisher_name: "Pearson" },
+  { $set: { publisher_city: "Pune" } }
+);
+
+// 7️⃣ d) Find details of publisher named “Pearson”
+db.Book.find({ publisher_name: "Pearson" }).pretty();

@@ -1,0 +1,97 @@
+✅ Step 1 — Prerequisites
+
+Install MongoDB and start the service (default port: 27017)
+
+Install Java JDK 8+
+
+Download and add the MongoDB Java Driver JAR to your project:
+👉 https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver
+
+Example: mongo-java-driver-3.12.10.jar
+
+✅ Step 2 — Full Java Program (Ready to Run)
+
+Save this as MongoDBJDBCExample.java
+
+// ==============================================
+// Q21 – MongoDB Connectivity with Java
+// Database Navigation: Add, Edit, Delete, Display
+// ==============================================
+
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import org.bson.Document;
+
+public class MongoDBJDBCExample {
+
+    public static void main(String[] args) {
+
+        // 1️⃣ Connect to MongoDB Server
+        MongoClient mongoClient = new MongoClient("localhost", 27017);
+        System.out.println("✅ Connected to MongoDB successfully!");
+
+        // 2️⃣ Access or create database
+        MongoDatabase db = mongoClient.getDatabase("college_db");
+        System.out.println("✅ Database selected: college_db");
+
+        // 3️⃣ Access or create collection
+        MongoCollection<Document> collection = db.getCollection("Student");
+        System.out.println("✅ Collection ready: Student");
+
+        // ------------------------------
+        // ADD (Insert) Operation
+        // ------------------------------
+        Document student1 = new Document("RollNo", 1)
+                .append("Name", "Ramesh")
+                .append("City", "Pune")
+                .append("Course", "DBMS");
+
+        Document student2 = new Document("RollNo", 2)
+                .append("Name", "Sneha")
+                .append("City", "Mumbai")
+                .append("Course", "AI");
+
+        collection.insertOne(student1);
+        collection.insertOne(student2);
+        System.out.println("📘 Records Inserted Successfully!");
+
+        // ------------------------------
+        // EDIT (Update) Operation
+        // ------------------------------
+        collection.updateOne(Filters.eq("RollNo", 1),
+                new Document("$set", new Document("City", "Nashik")));
+        System.out.println("✏️ Record Updated Successfully!");
+
+        // ------------------------------
+        // DELETE Operation
+        // ------------------------------
+        collection.deleteOne(Filters.eq("RollNo", 2));
+        System.out.println("🗑️ Record Deleted Successfully!");
+
+        // ------------------------------
+        // DISPLAY (Select) Operation
+        // ------------------------------
+        System.out.println("\n📋 Current Records in Collection:");
+        MongoCursor<Document> cursor = collection.find().iterator();
+        while (cursor.hasNext()) {
+            System.out.println(cursor.next().toJson());
+        }
+
+        // ------------------------------
+        // CLOSE CONNECTION
+        // ------------------------------
+        mongoClient.close();
+        System.out.println("\n✅ MongoDB Connection Closed.");
+    }
+}
+
+✅ Step 3 — Compile and Run
+💻 In Terminal (Ubuntu / Windows CMD)
+javac -cp .:mongo-java-driver-3.12.10.jar MongoDBJDBCExample.java
+java -cp .:mongo-java-driver-3.12.10.jar MongoDBJDBCExample
+
+
+(In Windows, replace : with ; for classpath separator.)

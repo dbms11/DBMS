@@ -1,0 +1,37 @@
+// i) Create Collections and Insert Sample Documents
+
+// Use or create a database
+use schoolDB
+
+// Create Teachers collection and insert sample documents
+db.Teachers.insertMany([
+    { Tname: "Ravi", dno: 1, experience: 12, salary: 12000, date_of_joining: new Date("2010-06-15") },
+    { Tname: "Sunita", dno: 2, experience: 8, salary: 9000, date_of_joining: new Date("2015-03-20") },
+    { Tname: "Anil", dno: 2, experience: 15, salary: 15000, date_of_joining: new Date("2008-11-01") },
+    { Tname: "Kiran", dno: 3, experience: 5, salary: 8000, date_of_joining: new Date("2018-01-10") },
+    { Tname: "Geeta", dno: 2, experience: 11, salary: 11000, date_of_joining: new Date("2012-09-05") }
+])
+
+// Create Students collection and insert sample documents
+db.Students.insertMany([
+    { Sname: "Anil", roll_no: 2, class: "TE" },
+    { Sname: "Ramesh", roll_no: 1, class: "SE" },
+    { Sname: "Sunil", roll_no: 3, class: "TE" },
+    { Sname: "Priya", roll_no: 4, class: "BE" },
+    { Sname: "Anita", roll_no: 5, class: "TE" }
+])
+
+// ii) Find all teachers of dno = 2 and salary >= 10000
+db.Teachers.find({ dno: 2, salary: { $gte: 10000 } })
+
+// iii) Find student information having roll_no = 2 or Sname = "Anil"
+db.Students.find({ $or: [ { roll_no: 2 }, { Sname: "Anil" } ] })
+
+// iv) Display total number of Students of TE class
+db.Students.countDocuments({ class: "TE" })
+
+// v) Update salary as 5% increment for teachers whose experience > 10 years
+db.Teachers.updateMany(
+    { experience: { $gt: 10 } },
+    [ { $set: { salary: { $multiply: [ "$salary", 1.05 ] } } } ]
+)

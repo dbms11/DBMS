@@ -1,0 +1,66 @@
+-- Create database and table
+CREATE DATABASE IF NOT EXISTS student_db;
+USE student_db;
+
+
+CREATE TABLE StudentMarks (
+  RollNo INT PRIMARY KEY,
+  Name VARCHAR(50),
+  Marks INT,
+  Grade VARCHAR(30)
+);
+
+
+
+-- Insert sample data
+INSERT INTO StudentMarks (RollNo, Name, Marks)
+VALUES
+(1, 'Ramesh', 1450),
+(2, 'Suresh', 920),
+(3, 'Mahesh', 870),
+(4, 'Sneha', 780);
+
+
+
+-- Create Stored Procedure
+DELIMITER //
+CREATE PROCEDURE proc_Grade()
+BEGIN
+  DECLARE done INT DEFAULT 0;
+  DECLARE sRoll INT;
+  DECLARE sMarks INT;
+
+  DECLARE cur CURSOR FOR SELECT RollNo, Marks FROM StudentMarks;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+  OPEN cur;
+  read_loop: LOOP
+    FETCH cur INTO sRoll, sMarks;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+
+    IF sMarks BETWEEN 990 AND 1500 THEN
+      UPDATE StudentMarks SET Grade = 'Distinction' WHERE RollNo = sRoll;
+    ELSEIF sMarks BETWEEN 900 AND 989 THEN
+      UPDATE StudentMarks SET Grade = 'First Class' WHERE RollNo = sRoll;
+    ELSEIF sMarks BETWEEN 825 AND 899 THEN
+      UPDATE StudentMarks SET Grade = 'Higher Second Class' WHERE RollNo = sRoll;
+    ELSE
+      UPDATE StudentMarks SET Grade = 'Fail' WHERE RollNo = sRoll;
+    END IF;
+  END LOOP;
+
+  CLOSE cur;
+END //
+DELIMITER ;
+
+
+
+-- Execute the procedure
+CALL proc_Grade();
+
+
+
+-- Display updated table
+SELECT * FROM StudentMarks;

@@ -1,0 +1,60 @@
+Step 1: Create Tables and Insert Sample Data
+-- 1. Create Course table
+CREATE TABLE Course (
+    Course_id INT PRIMARY KEY,
+    Name VARCHAR2(50),
+    Fee NUMBER(10,2),
+    Duration VARCHAR2(20),
+    Status VARCHAR2(20)
+);
+
+-- 2. Create Student table
+CREATE TABLE Student (
+    Roll_no INT PRIMARY KEY,
+    Name VARCHAR2(50),
+    Date_of_Birth DATE,
+    Course_id INT,
+    CONSTRAINT fk_course FOREIGN KEY (Course_id) REFERENCES Course(Course_id)
+);
+
+-- 3. Insert sample data into Course
+INSERT INTO Course (Course_id, Name, Fee, Duration, Status) VALUES (1, 'Java', 15000, '6 months', 'offered');
+INSERT INTO Course (Course_id, Name, Fee, Duration, Status) VALUES (2, 'Python', 12000, '4 months', 'offered');
+INSERT INTO Course (Course_id, Name, Fee, Duration, Status) VALUES (3, 'C++', 10000, '5 months', 'offered');
+
+-- 4. Insert sample data into Student
+INSERT INTO Student (Roll_no, Name, Date_of_Birth, Course_id) VALUES (101, 'Anil', TO_DATE('2000-03-15','YYYY-MM-DD'), 1);
+INSERT INTO Student (Roll_no, Name, Date_of_Birth, Course_id) VALUES (102, 'Sunita', TO_DATE('2001-06-20','YYYY-MM-DD'), 1);
+INSERT INTO Student (Roll_no, Name, Date_of_Birth, Course_id) VALUES (103, 'Priya', TO_DATE('2000-01-12','YYYY-MM-DD'), 2);
+INSERT INTO Student (Roll_no, Name, Date_of_Birth, Course_id) VALUES (104, 'Ravi', TO_DATE('1999-08-10','YYYY-MM-DD'), 3);
+INSERT INTO Student (Roll_no, Name, Date_of_Birth, Course_id) VALUES (105, 'Geeta', TO_DATE('2002-04-18','YYYY-MM-DD'), 3);
+INSERT INTO Student (Roll_no, Name, Date_of_Birth, Course_id) VALUES (106, 'Amit', TO_DATE('2001-07-25','YYYY-MM-DD'), 1);
+
+Step 2: Create PL/SQL Procedure
+CREATE OR REPLACE PROCEDURE update_course_status IS
+BEGIN
+    FOR rec IN (
+        SELECT c.Course_id, COUNT(s.Roll_no) AS student_count
+        FROM Course c
+        LEFT JOIN Student s ON c.Course_id = s.Course_id
+        GROUP BY c.Course_id
+    ) LOOP
+        IF rec.student_count < 5 THEN
+            UPDATE Course
+            SET Status = 'not offered'
+            WHERE Course_id = rec.Course_id;
+        END IF;
+    END LOOP;
+
+    COMMIT;
+END;
+/
+
+Step 3: Execute the Procedure
+BEGIN
+    update_course_status;
+END;
+/
+
+Step 4: Verify Changes
+SELECT * FROM Course;

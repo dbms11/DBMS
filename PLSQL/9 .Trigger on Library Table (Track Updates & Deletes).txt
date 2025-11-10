@@ -1,0 +1,71 @@
+-- Create and use database
+CREATE DATABASE IF NOT EXISTS library_trigger_db;
+USE library_trigger_db;
+
+-- 1️⃣ Create main Library table
+CREATE TABLE Library (
+  Book_ID INT PRIMARY KEY,
+  Book_Name VARCHAR(100),
+  Author_Name VARCHAR(100),
+  Publisher VARCHAR(100),
+  Price DECIMAL(10,2)
+);
+
+-- Insert sample records
+INSERT INTO Library VALUES
+(1, 'DBMS Concepts', 'Korth', 'Pearson', 550.00),
+(2, 'Operating Systems', 'Silberschatz', 'McGraw Hill', 600.00),
+(3, 'Computer Networks', 'Tanenbaum', 'TMH', 500.00);
+
+-- 2️⃣ Create Library_Audit table to store old values
+CREATE TABLE Library_Audit (
+  Audit_ID INT AUTO_INCREMENT PRIMARY KEY,
+  Action_Type VARCHAR(20),
+  Book_ID INT,
+  Book_Name VARCHAR(100),
+  Author_Name VARCHAR(100),
+  Publisher VARCHAR(100),
+  Price DECIMAL(10,2),
+  Action_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3️⃣ BEFORE DELETE Trigger — store deleted data
+DELIMITER //
+CREATE TRIGGER before_book_delete
+BEFORE DELETE ON Library
+FOR EACH ROW
+BEGIN
+  INSERT INTO Library_Audit (Action_Type, Book_ID, Book_Name, Author_Name, Publisher, Price)
+  VALUES ('DELETE', OLD.Book_ID, OLD.Book_Name, OLD.Author_Name, OLD.Publisher, OLD.Price);
+END //
+DELIMITER ;
+
+-- 4️⃣ BEFORE UPDATE Trigger — store old data before changes
+DELIMITER //
+CREATE TRIGGER before_book_update
+BEFORE UPDATE ON Library
+FOR EACH ROW
+BEGIN
+  INSERT INTO Library_Audit (Action_Type, Book_ID, Book_Name, Author_Name, Publisher, Price)
+  VALUES ('UPDATE_OLD', OLD.Book_ID, OLD.Book_Name, OLD.Author_Name, OLD.Publisher, OLD.Price);
+END //
+DELIMITER ;
+
+-- 5️⃣ AFTER UPDATE Trigger — store new data after update
+DELIMITER //
+CREATE TRIGGER after_book_update
+AFTER UPDATE ON Library
+FOR EACH ROW
+BEGIN
+  INSERT INTO Library_Audit (Action_Type, Book_ID, Book_Name, Author_Name, Publisher, Price)
+  VALUES ('UPDATE_NEW', NEW.Book_ID, NEW.Book_Name, NEW.Author_Name, NEW.Publisher, NEW.Price);
+END //
+DELIMITER ;
+
+-- 6️⃣ Test update and delete operations
+UPDATE Library SET Price = 750.00 WHERE Book_ID = 1;
+DELETE FROM Library WHERE Book_ID = 2;
+
+-- 7️⃣ View results
+SELECT * FROM Library;
+SELECT * FROM Library_Audit;

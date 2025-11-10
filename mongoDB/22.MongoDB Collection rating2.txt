@@ -1,0 +1,58 @@
+// ==========================================
+// Use or Create Database
+// ==========================================
+use movie_db;
+
+// ==========================================
+// Create Collection and Insert Documents
+// ==========================================
+db.rating.insertMany([
+  { movie_id: 101, user_id: 11, title: "Toy Story (1995)", status: "A", rating: 5 },
+  { movie_id: 102, user_id: 12, title: "Finding Nemo (2003)", status: "A", rating: 4 },
+  { movie_id: 103, user_id: 13, title: "ICE AGE (2005)", status: "A", rating: 3 },
+  { movie_id: 104, user_id: 14, title: "Avatar (2009)", status: "B", rating: 5 },
+  { movie_id: 105, user_id: 15, title: "The Lion King (1994)", status: "A", rating: 4 }
+]);
+
+// ==========================================
+// a) Get ratings for "ICE AGE (2005)" using descending index on movie_id and explain
+// ==========================================
+print("Creating descending index on movie_id:");
+db.rating.createIndex({ movie_id: -1 });
+
+print("\nQuery Plan for 'ICE AGE (2005)':");
+db.rating.find({ title: "ICE AGE (2005)" }).sort({ movie_id: -1 }).explain("executionStats");
+
+// ==========================================
+// b) Rebuild all indexes for the rating collection
+// ==========================================
+print("\nRebuilding all indexes in rating collection:");
+db.rating.reIndex();
+
+// ==========================================
+// c) Drop index on rating collection
+// ==========================================
+print("\nDropping all custom indexes from rating collection:");
+db.rating.dropIndexes();
+
+// Verify dropped indexes
+db.rating.getIndexes();
+
+// ==========================================
+// d) Create a compound index on movie_id (ASC) and rating (DESC)
+// ==========================================
+print("\nCreating compound index on movie_id (ASC) and rating (DESC):");
+db.rating.createIndex({ movie_id: 1, rating: -1 });
+
+// Verify created indexes
+print("\nIndexes after compound index creation:");
+db.rating.getIndexes();
+
+// ==========================================
+// e) Create descending order index on movie_id again and verify query plan for Toy Story (1995)
+// ==========================================
+print("\nCreating descending index on movie_id again:");
+db.rating.createIndex({ movie_id: -1 });
+
+print("\nQuery plan for 'Toy Story (1995)' using descending index:");
+db.rating.find({ title: "Toy Story (1995)" }).sort({ movie_id: -1 }).explain("executionStats");

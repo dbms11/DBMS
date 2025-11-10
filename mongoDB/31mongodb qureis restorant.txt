@@ -1,0 +1,47 @@
+// 1. Use or create database
+use restaurantDB
+
+// 2. Drop collection if it exists
+db.restaurants.drop()
+
+// 3. Insert sample document
+db.restaurants.insertOne({
+    "address": { 
+        "building": "1007", 
+        "coord": [ -73.856077, 40.848447 ], 
+        "street": "Morris Park Ave", 
+        "zipcode": "10462" 
+    },
+    "borough": "Bronx",
+    "cuisine": "Bakery",
+    "grades": [ 
+        { "date": new Date(1393804800000), "grade": "A", "score": 2 },
+        { "date": new Date(1378857600000), "grade": "A", "score": 6 },
+        { "date": new Date(1358985600000), "grade": "A", "score": 10 },
+        { "date": new Date(1322006400000), "grade": "A", "score": 9 },
+        { "date": new Date(1299715200000), "grade": "B", "score": 14 }
+    ],
+    "name": "Morris Park Bake Shop",
+    "restaurant_id": "30075445"
+})
+
+// 4. a) Display restaurant_id, name, borough, cuisine for all documents
+print("Query (a): restaurant_id, name, borough, cuisine")
+db.restaurants.find(
+    {},
+    { restaurant_id: 1, name: 1, borough: 1, cuisine: 1 }
+).pretty()
+
+// 5. b) Same as (a) (repeated)
+print("Query (b): restaurant_id, name, borough, cuisine")
+db.restaurants.find(
+    {},
+    { restaurant_id: 1, name: 1, borough: 1, cuisine: 1 }
+).pretty()
+
+// 6. c) Display restaurant_id, name, borough, zipcode, exclude _id
+print("Query (c): restaurant_id, name, borough, zipcode (exclude _id)")
+db.restaurants.find(
+    {},
+    { _id: 0, restaurant_id: 1, name: 1, borough: 1, "address.zipcode": 1 }
+).pretty()

@@ -1,0 +1,66 @@
+// ==========================================
+// Use or create the database
+// ==========================================
+use mapreduce_db;
+
+// ==========================================
+// Create collection "orders" and insert sample documents
+// ==========================================
+db.orders.insertMany([
+  { cust_id: "abc123", ord_date: new Date("Oct 04, 2012"), status: "A", price: 25, gender: "F", rating: 1 },
+  { cust_id: "xyz789", ord_date: new Date("Oct 05, 2012"), status: "A", price: 50, gender: "M", rating: 4 },
+  { cust_id: "pqr456", ord_date: new Date("Oct 06, 2012"), status: "B", price: 35, gender: "F", rating: 3 },
+  { cust_id: "lmn321", ord_date: new Date("Oct 07, 2012"), status: "A", price: 60, gender: "M", rating: 5 },
+  { cust_id: "def654", ord_date: new Date("Oct 08, 2012"), status: "A", price: 40, gender: "F", rating: 2 },
+  { cust_id: "rst987", ord_date: new Date("Oct 09, 2012"), status: "A", price: 55, gender: "M", rating: 4 }
+]);
+
+// ==========================================
+// a) Count number of Female (F) and Male (M) respondents
+// ==========================================
+
+// Define Map function
+var mapGender = function() {
+  emit(this.gender, 1);
+};
+
+// Define Reduce function
+var reduceGender = function(key, values) {
+  return Array.sum(values);
+};
+
+// Perform MapReduce
+db.orders.mapReduce(
+  mapGender,
+  reduceGender,
+  { out: "gender_count" }
+);
+
+// Display results
+print("Count of Male and Female respondents:");
+db.gender_count.find().pretty();
+
+// ==========================================
+// b) Count the number of each rating (1–5)
+// ==========================================
+
+// Define Map function for ratings
+var mapRating = function() {
+  emit(this.rating, 1);
+};
+
+// Define Reduce function for ratings
+var reduceRating = function(key, values) {
+  return Array.sum(values);
+};
+
+// Perform MapReduce
+db.orders.mapReduce(
+  mapRating,
+  reduceRating,
+  { out: "rating_count" }
+);
+
+// Display results
+print("Count of each Rating (1–5):");
+db.rating_count.find().pretty();

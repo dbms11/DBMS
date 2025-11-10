@@ -1,0 +1,30 @@
+USE employee_db;
+
+DELIMITER //
+CREATE PROCEDURE Increase_Salary()
+BEGIN
+  DECLARE rows_changed INT DEFAULT 0;
+
+  -- Update salaries below 10000 by 10 %
+  UPDATE EmployeePosition
+  SET Salary = Salary + (Salary * 0.10)
+  WHERE Salary < 10000;
+
+  SET rows_changed = ROW_COUNT();
+
+
+
+  -- Show message
+  SELECT CONCAT(rows_changed, ' employee(s) salary updated successfully.') AS Message;
+END //
+DELIMITER ;
+
+
+
+-- Execute procedure
+CALL Increase_Salary();
+
+
+
+-- Verify results
+SELECT EmpID, Salary FROM EmployeePosition;

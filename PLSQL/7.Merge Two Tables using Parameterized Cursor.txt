@@ -1,0 +1,69 @@
+-- Create database
+CREATE DATABASE IF NOT EXISTS rollcall_db;
+USE rollcall_db;
+
+
+-- Create both tables
+CREATE TABLE N_RollCall (
+  RollNo INT PRIMARY KEY,
+  Name VARCHAR(50)
+);
+
+
+CREATE TABLE O_RollCall (
+  RollNo INT PRIMARY KEY,
+  Name VARCHAR(50)
+);
+
+
+-- Insert sample data
+INSERT INTO N_RollCall VALUES
+(1, 'Ramesh'),
+(2, 'Suresh'),
+(3, 'Mahesh'),
+(4, 'Sneha');
+
+
+INSERT INTO O_RollCall VALUES
+(1, 'Ramesh'),
+(3, 'Mahesh');
+
+
+-- Create Stored Procedure to merge data
+DELIMITER //
+CREATE PROCEDURE Merge_RollCall()
+BEGIN
+  DECLARE done INT DEFAULT 0;
+  DECLARE rno INT;
+  DECLARE rname VARCHAR(50);
+
+
+
+  -- Define cursor for N_RollCall
+  DECLARE roll_cursor CURSOR FOR SELECT RollNo, Name FROM N_RollCall;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+  OPEN roll_cursor;
+  read_loop: LOOP
+    FETCH roll_cursor INTO rno, rname;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+
+    -- Check if record exists in O_RollCall
+    IF NOT EXISTS (SELECT * FROM O_RollCall WHERE RollNo = rno) THEN
+      INSERT INTO O_RollCall VALUES (rno, rname);
+    END IF;
+  END LOOP;
+
+  CLOSE roll_cursor;
+END //
+DELIMITER ;
+
+
+
+-- Execute procedure
+CALL Merge_RollCall();
+
+-- View merged table
+SELECT * FROM O_RollCall;

@@ -1,0 +1,93 @@
+// ==========================================
+// Use or create the database
+// ==========================================
+use sales_db;
+
+// ==========================================
+// Create collection ORDERS and insert documents
+// ==========================================
+db.ORDERS.insertMany([
+  {
+    cust_id: "abc123",
+    ord_date: new Date("Oct 04, 2012"),
+    status: "A",
+    price: 50,
+    items: [
+      { sku: "xxx", qty: 25, price: 1 },
+      { sku: "yyy", qty: 25, price: 1 }
+    ]
+  },
+  {
+    cust_id: "abc123",
+    ord_date: new Date("Oct 10, 2012"),
+    status: "A",
+    price: 75,
+    items: [
+      { sku: "zzz", qty: 50, price: 1.5 }
+    ]
+  },
+  {
+    cust_id: "xyz789",
+    ord_date: new Date("Nov 15, 2012"),
+    status: "B",
+    price: 100,
+    items: [
+      { sku: "mmm", qty: 40, price: 2.5 },
+      { sku: "nnn", qty: 20, price: 3.0 }
+    ]
+  },
+  {
+    cust_id: "pqr456",
+    ord_date: new Date("Dec 01, 2012"),
+    status: "A",
+    price: 150,
+    items: [
+      { sku: "abc", qty: 10, price: 15 }
+    ]
+  }
+]);
+
+// ==========================================
+// a) Count all records from ORDERS
+// ==========================================
+print("Total Number of Orders:");
+db.ORDERS.countDocuments();
+
+// ==========================================
+// b) Sum the 'price' field from ORDERS
+// ==========================================
+print("Total Sum of Price from ORDERS:");
+db.ORDERS.aggregate([
+  { $group: { _id: null, total_price: { $sum: "$price" } } }
+]);
+
+// ==========================================
+// c) For each unique cust_id, sum the 'price' field
+// ==========================================
+print("Sum of Price per Customer:");
+db.ORDERS.aggregate([
+  { $group: { _id: "$cust_id", total_price: { $sum: "$price" } } }
+]);
+
+// ==========================================
+// d) For each unique cust_id, sum price, results sorted by sum
+// ==========================================
+print("Sum of Price per Customer (Sorted by Sum):");
+db.ORDERS.aggregate([
+  { $group: { _id: "$cust_id", total_price: { $sum: "$price" } } },
+  { $sort: { total_price: 1 } }  // ascending order
+]);
+
+// ==========================================
+// e) For each unique cust_id and ord_date grouping, sum price
+// ==========================================
+print("Sum of Price Grouped by cust_id and ord_date:");
+db.ORDERS.aggregate([
+  {
+    $group: {
+      _id: { cust_id: "$cust_id", ord_date: "$ord_date" },
+      total_price: { $sum: "$price" }
+    }
+  },
+  { $sort: { "_id.cust_id": 1, "_id.ord_date": 1 } }
+]);

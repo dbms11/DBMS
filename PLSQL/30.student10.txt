@@ -1,0 +1,84 @@
+Step 1: Create Tables and Insert Sample Data
+-- 1. Create Course table
+CREATE TABLE Course (
+    Course_id INT PRIMARY KEY,
+    Name VARCHAR2(50),
+    Fee NUMBER(10,2),
+    Duration VARCHAR2(20),
+    Status VARCHAR2(20)
+);
+
+-- 2. Create Student table
+CREATE TABLE Student (
+    Roll_no INT PRIMARY KEY,
+    Name VARCHAR2(50),
+    Date_of_Birth DATE,
+    Course_id INT,
+    CONSTRAINT fk_course FOREIGN KEY (Course_id) REFERENCES Course(Course_id)
+);
+
+-- 3. Insert sample data into Course
+INSERT INTO Course (Course_id, Name, Fee, Duration, Status) VALUES (1, 'Java', 15000, '6 months', 'offered');
+INSERT INTO Course (Course_id, Name, Fee, Duration, Status) VALUES (2, 'Python', 12000, '4 months', 'offered');
+INSERT INTO Course (Course_id, Name, Fee, Duration, Status) VALUES (3, 'C++', 10000, '5 months', 'offered');
+
+-- 4. Insert sample data into Student (simulate < 10 and >= 10 students)
+-- Course 1: 12 students (>=10 → offered)
+BEGIN
+    FOR i IN 1..12 LOOP
+        INSERT INTO Student (Roll_no, Name, Date_of_Birth, Course_id)
+        VALUES (i, 'Student'||i, TO_DATE('2000-01-01','YYYY-MM-DD') + i, 1);
+    END LOOP;
+END;
+/
+
+-- Course 2: 8 students (<10 → not offered)
+BEGIN
+    FOR i IN 13..20 LOOP
+        INSERT INTO Student (Roll_no, Name, Date_of_Birth, Course_id)
+        VALUES (i, 'Student'||i, TO_DATE('2000-01-01','YYYY-MM-DD') + i, 2);
+    END LOOP;
+END;
+/
+
+-- Course 3: 10 students (>=10 → offered)
+BEGIN
+    FOR i IN 21..30 LOOP
+        INSERT INTO Student (Roll_no, Name, Date_of_Birth, Course_id)
+        VALUES (i, 'Student'||i, TO_DATE('2000-01-01','YYYY-MM-DD') + i, 3);
+    END LOOP;
+END;
+/
+
+Step 2: Create PL/SQL Procedure
+CREATE OR REPLACE PROCEDURE update_course_status IS
+BEGIN
+    FOR rec IN (
+        SELECT c.Course_id, COUNT(s.Roll_no) AS student_count
+        FROM Course c
+        LEFT JOIN Student s ON c.Course_id = s.Course_id
+        GROUP BY c.Course_id
+    ) LOOP
+        IF rec.student_count >= 10 THEN
+            UPDATE Course
+            SET Status = 'offered'
+            WHERE Course_id = rec.Course_id;
+        ELSE
+            UPDATE Course
+            SET Status = 'not offered'
+            WHERE Course_id = rec.Course_id;
+        END IF;
+    END LOOP;
+
+    COMMIT;
+END;
+/
+
+Step 3: Execute the Procedure
+BEGIN
+    update_course_status;
+END;
+/
+
+Step 4: Verify Results
+SELECT * FROM Course;
