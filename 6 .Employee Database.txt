@@ -1,0 +1,88 @@
+-- Create and use database
+CREATE DATABASE IF NOT EXISTS employee_db;
+USE employee_db;
+
+
+-- Create EmployeeInfo table
+CREATE TABLE EmployeeInfo (
+  EmpID INT PRIMARY KEY,
+  EmpFname VARCHAR(50),
+  EmpLname VARCHAR(50),
+  Department VARCHAR(30),
+  Project VARCHAR(50),
+  Address VARCHAR(100),
+  DOB DATE,
+  Gender CHAR(1)
+);
+
+
+
+-- Create EmployeePosition table
+CREATE TABLE EmployeePosition (
+  EmpID INT,
+  EmpPosition VARCHAR(50),
+  DateOfJoining DATE,
+  Salary DECIMAL(10,2),
+  PRIMARY KEY (EmpID),
+  FOREIGN KEY (EmpID) REFERENCES EmployeeInfo(EmpID)
+);
+
+
+
+-- Insert sample data
+INSERT INTO EmployeeInfo VALUES
+(101, 'Ramesh', 'Patil', 'HR', 'Recruitment', 'Pune', '1998-01-15', 'M'),
+(102, 'Suresh', 'Sharma', 'IT', 'AI_Project', 'Mumbai', '1996-06-10', 'M'),
+(103, 'Sneha', 'Desai', 'Finance', 'Accounts', 'Pune', '1999-03-12', 'F'),
+(104, 'Sonal', 'Joshi', 'IT', 'WebApp', 'Delhi', '1997-12-21', 'F'),
+(105, 'Sahil', 'Kumar', 'HR', 'Training', 'Pune', '1995-09-18', 'M');
+
+
+INSERT INTO EmployeePosition VALUES
+(101, 'HR_Manager', '2020-01-01', 80000.00),
+(102, 'Software_Engineer', '2019-05-12', 95000.00),
+(103, 'Accountant', '2021-03-20', 60000.00),
+(104, 'Web_Developer', '2022-01-15', 72000.00),
+(105, 'HR_Executive', '2023-06-05', 45000.00);
+
+
+-- i) Fetch EmpFname in UPPERCASE with alias EmpName
+SELECT UPPER(EmpFname) AS EmpName
+FROM EmployeeInfo;
+
+
+
+-- ii) Number of employees working in 'HR' department
+SELECT COUNT(*) AS HR_Employees
+FROM EmployeeInfo
+WHERE Department = 'HR';
+
+
+
+-- iii) Employees whose salary is between 50000 and 100000
+SELECT EI.EmpFname, EI.EmpLname, EP.Salary
+FROM EmployeeInfo EI
+JOIN EmployeePosition EP ON EI.EmpID = EP.EmpID
+WHERE EP.Salary BETWEEN 50000 AND 100000;
+
+
+
+-- iv) Names of employees whose first name begins with 'S'
+SELECT EmpFname, EmpLname
+FROM EmployeeInfo
+WHERE EmpFname LIKE 'S%';
+
+
+
+-- v) Fetch top N records (example: top 3 highest salaries)
+SELECT EI.EmpFname, EI.EmpLname, EP.Salary
+FROM EmployeeInfo EI
+JOIN EmployeePosition EP ON EI.EmpID = EP.EmpID
+ORDER BY EP.Salary DESC
+LIMIT 3;
+
+
+
+-- Optional checks
+SELECT * FROM EmployeeInfo;
+SELECT * FROM EmployeePosition;

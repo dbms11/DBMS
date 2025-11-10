@@ -1,0 +1,59 @@
+-- Create database
+CREATE DATABASE IF NOT EXISTS college_db;
+USE college_db;
+
+-- 1️⃣ Create tables
+CREATE TABLE College_info (
+  college_code INT PRIMARY KEY,
+  college_name VARCHAR(100),
+  address VARCHAR(100)
+);
+
+CREATE TABLE Faculty_info (
+  faculty_code INT PRIMARY KEY,
+  faculty_name VARCHAR(100),
+  qualification VARCHAR(50),
+  experience_in_years INT,
+  address VARCHAR(100),
+  college_code INT,
+  FOREIGN KEY (college_code) REFERENCES College_info(college_code)
+);
+
+-- 2️⃣ Insert sample data
+INSERT INTO College_info VALUES
+(101, 'SVPM College of Engg', 'Malegaon BK'),
+(102, 'MIT College', 'Pune'),
+(103, 'DY Patil College', 'Kolhapur'),
+(104, 'COEP Tech', 'Pune'),
+(105, 'VIT College', 'Mumbai');
+
+INSERT INTO Faculty_info VALUES
+(1, 'Ramesh Patil', 'M.Tech', 12, 'Pune', 101),
+(2, 'Suresh Deshmukh', 'PhD', 15, 'Pune', 102),
+(3, 'Sneha Joshi', 'M.Sc', 9, 'Mumbai', 105),
+(4, 'Mahesh K', 'M.Tech', 11, 'Kolhapur', 103),
+(5, 'Sonal Shah', 'B.Tech', 7, 'Pune', 104),
+(6, 'Ketan Rane', 'M.Tech', 10, 'Mumbai', 105),
+(7, 'Pooja Kale', 'PhD', 18, 'Pune', 101),
+(8, 'Neha Pawar', 'M.Tech', 5, 'Pune', 102);
+
+-- a) Already inserted 8 records ✅
+
+-- b) Display all records
+SELECT * FROM College_info;
+SELECT * FROM Faculty_info;
+
+-- c) Display all faculty members from Pune
+SELECT faculty_name, qualification, address
+FROM Faculty_info
+WHERE address = 'Pune';
+
+-- d) Faculty with ≥10 years exp AND M.Tech
+SELECT faculty_name, qualification, experience_in_years
+FROM Faculty_info
+WHERE qualification = 'M.Tech' AND experience_in_years >= 10;
+
+-- e) Faculty with ≥10 years exp BUT not M.Tech
+SELECT faculty_name, qualification, experience_in_years
+FROM Faculty_info
+WHERE qualification <> 'M.Tech' AND experience_in_years >= 10;

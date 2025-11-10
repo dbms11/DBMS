@@ -1,0 +1,59 @@
+-- 1. Create database and use it
+CREATE DATABASE IF NOT EXISTS schoolDB;
+USE schoolDB;
+
+-- 2. Create STUDENT table
+DROP TABLE IF EXISTS STUDENT;
+CREATE TABLE STUDENT (
+    FIRST_NAME VARCHAR(50),
+    MIDDLE_NAME VARCHAR(50),
+    LAST_NAME VARCHAR(50),
+    STUDENT_ENRLNO INT PRIMARY KEY,
+    DATE_OF_BIRTH DATE,
+    CLASS INT,
+    SECTION CHAR(1),
+    GENDER CHAR(1),
+    YEAR_OF_JOIN INT,
+    ADMISSION_NO INT,
+    ADDRESS1 VARCHAR(100),
+    ADDRESS2 VARCHAR(100),
+    CITY VARCHAR(50),
+    STATE VARCHAR(50),
+    RESPHONE VARCHAR(15),
+    PIN_CODE VARCHAR(10)
+);
+
+-- 3. Insert sample data
+INSERT INTO STUDENT 
+(FIRST_NAME, MIDDLE_NAME, LAST_NAME, STUDENT_ENRLNO, DATE_OF_BIRTH, CLASS, SECTION, GENDER, YEAR_OF_JOIN, ADMISSION_NO, ADDRESS1, ADDRESS2, CITY, STATE, RESPHONE, PIN_CODE)
+VALUES
+('Anil', 'Kumar', 'Sharma', 1, '2005-03-15', 6, 'A', 'M', 2016, 1001, '123 Street', '', 'Mumbai', 'MH', '9876543210', '400001'),
+('Amit', 'Raj', 'Verma', 2, '2005-07-20', 6, 'A', 'M', 2016, 1002, '456 Lane', '', 'Pune', 'MH', '9876543211', '411001'),
+('Anita', 'Devi', 'Patel', 3, '2005-05-10', 6, 'B', 'F', 2016, 1003, '789 Road', '', 'Delhi', 'DL', '9876543212', '110001'),
+('Priya', '', 'Shah', 4, '2005-08-12', 5, 'A', 'F', 2015, 1004, '321 Ave', '', 'Bangalore', 'KA', '9876543213', '560001'),
+('Ayesha', '', 'Khan', 5, '2000-01-05', 6, 'A', 'F', 2000, 1005, '654 Street', '', 'Hyderabad', 'TG', '9876543214', '500001');
+
+-- 4. (a) List students in class 6, section A
+SELECT 'Query (a): Students in Class 6, Section A' AS Description;
+SELECT * FROM STUDENT
+WHERE CLASS = 6 AND SECTION = 'A';
+
+-- 5. (b) List students whose first name starts with "A"
+SELECT 'Query (b): Students whose first name starts with A' AS Description;
+SELECT * FROM STUDENT
+WHERE FIRST_NAME LIKE 'A%';
+
+-- 6. (c) List all girl students
+SELECT 'Query (c): All girl students' AS Description;
+SELECT * FROM STUDENT
+WHERE GENDER = 'F';
+
+-- 7. (d) List students whose YEAR_OF_JOIN is 2000
+SELECT 'Query (d): Students who joined in 2000' AS Description;
+SELECT * FROM STUDENT
+WHERE YEAR_OF_JOIN = 2000;
+
+-- 8. (e) Sort students by ADMISSION_NO in ascending order
+SELECT 'Query (e): Students sorted by ADMISSION_NO' AS Description;
+SELECT * FROM STUDENT
+ORDER BY ADMISSION_NO ASC;

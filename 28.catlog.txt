@@ -1,0 +1,55 @@
+-- 1. Create database and use it
+CREATE DATABASE IF NOT EXISTS libraryDB;
+USE libraryDB;
+
+-- 2. Create CATALOG table
+DROP TABLE IF EXISTS CATALOG;
+CREATE TABLE CATALOG (
+    BOOK_ID INT PRIMARY KEY,
+    BOOK_TITLE VARCHAR(100),
+    AUTHOR VARCHAR(50),
+    AUTHOR_ID VARCHAR(20),
+    PUBLISHER_ID VARCHAR(50),
+    CATEGORY_ID VARCHAR(50),
+    YEAR INT,
+    ISBN VARCHAR(20),
+    PRICE DECIMAL(10,2)
+);
+
+-- 3. Insert sample data
+INSERT INTO CATALOG 
+(BOOK_ID, BOOK_TITLE, AUTHOR, AUTHOR_ID, PUBLISHER_ID, CATEGORY_ID, YEAR, ISBN, PRICE)
+VALUES
+(1, 'Learn Python', 'Ravi Kumar', '123', 'Tata McGraw-Hill', 'COMPUTERS', 2013, 'ISBN001', 1200),
+(2, 'Master Java', 'Sunita Sharma', '124', 'Pearson', 'COMPUTERS', 2015, 'ISBN002', 1500),
+(3, 'Data Science Basics', 'Anil Verma', '125', 'Tata McGraw-Hill', 'SCIENCE', 2013, 'ISBN003', 900),
+(4, 'Algorithms', 'Geeta Singh', '126', 'O\'Reilly', 'COMPUTERS', 2013, 'ISBN004', 2000),
+(5, 'Networking Essentials', 'Ravi Kumar', '123', 'Tata McGraw-Hill', 'COMPUTERS', 2014, 'ISBN005', 800),
+(6, 'Database Systems', 'Anil Verma', '125', 'Tata McGraw-Hill', 'COMPUTERS', 2013, 'ISBN006', 1100);
+
+-- 4. (a) Display all books of CATEGORY_ID = "COMPUTERS"
+SELECT 'Query (a): Books in CATEGORY_ID = COMPUTERS' AS Description;
+SELECT * FROM CATALOG
+WHERE CATEGORY_ID = 'COMPUTERS';
+
+-- 5. (b) List all books whose PRICE >= 1000
+SELECT 'Query (b): Books with PRICE >= 1000' AS Description;
+SELECT * FROM CATALOG
+WHERE PRICE >= 1000;
+
+-- 6. (c) List all books whose PUBLISHER_ID = "Tata McGraw-Hill"
+SELECT 'Query (c): Books by PUBLISHER_ID = Tata McGraw-Hill' AS Description;
+SELECT * FROM CATALOG
+WHERE PUBLISHER_ID = 'Tata McGraw-Hill';
+
+-- 7. (d) List all books whose YEAR = 2013
+SELECT 'Query (d): Books published in YEAR 2013' AS Description;
+SELECT * FROM CATALOG
+WHERE YEAR = 2013;
+
+-- 8. (e) List all BOOK_TITLEs whose AUTHOR_ID = "123"
+SELECT 'Query (e): Book titles by AUTHOR_ID = 123' AS Description;
+SELECT BOOK_TITLE FROM CATALOG
+WHERE AUTHOR_ID = '123';
+
+

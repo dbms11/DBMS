@@ -1,0 +1,74 @@
+-- Create and use the database
+CREATE DATABASE IF NOT EXISTS college_system;
+USE college_system;
+
+-- 1️⃣ Create tables
+CREATE TABLE Faculty (
+  faculty_code INT PRIMARY KEY,
+  faculty_name VARCHAR(100),
+  specialization VARCHAR(100)
+);
+
+CREATE TABLE Subject (
+  subject_code INT PRIMARY KEY,
+  subject_name VARCHAR(100),
+  faculty_code INT,
+  FOREIGN KEY (faculty_code) REFERENCES Faculty(faculty_code)
+);
+
+CREATE TABLE Student (
+  roll_no INT PRIMARY KEY,
+  name VARCHAR(100),
+  subject_name VARCHAR(100),
+  subject_opted VARCHAR(10)
+);
+
+-- 2️⃣ Insert data
+INSERT INTO Faculty VALUES
+(1, 'Ramesh Patil', 'Database Systems'),
+(2, 'Sneha Joshi', 'Operating Systems'),
+(3, 'Suresh Sharma', 'Computer Networks'),
+(4, 'Pooja Kale', 'Data Science'),
+(5, 'Neha Pawar', 'AI and ML'),
+(6, 'Mahesh K', 'Web Development'),
+(7, 'Sonal Shah', 'Cyber Security'),
+(8, 'Ketan Rane', 'Embedded Systems');
+
+INSERT INTO Subject VALUES
+(101, 'DBMS', 1),
+(102, 'Operating Systems', 2),
+(103, 'Computer Networks', 3),
+(104, 'Data Science', 4),
+(105, 'AI Fundamentals', 5),
+(106, 'Web Programming', 6);
+
+INSERT INTO Student VALUES
+(1, 'Ravi', 'DBMS', 'Yes'),
+(2, 'Sneha', 'Operating Systems', 'Yes'),
+(3, 'Amit', 'Computer Networks', 'Yes'),
+(4, 'Kiran', 'DBMS', 'Yes'),
+(5, 'Sonal', 'AI Fundamentals', 'Yes'),
+(6, 'Nikita', 'Web Programming', 'Yes'),
+(7, 'Harshad', 'DBMS', 'Yes'),
+(8, 'Rohit', 'Data Science', 'Yes');
+
+-- 3️⃣ Display all records
+SELECT * FROM Faculty;
+SELECT * FROM Subject;
+SELECT * FROM Student;
+
+-- 4️⃣ Find number of students enrolled for subject “DBMS”
+SELECT COUNT(*) AS Total_Students_DBMS
+FROM Student
+WHERE subject_name = 'DBMS';
+
+-- 5️⃣ Faculty members who have not offered any subject
+SELECT faculty_name
+FROM Faculty
+WHERE faculty_code NOT IN (SELECT faculty_code FROM Subject);
+
+-- 6️⃣ Subjects not offered by any faculty member
+SELECT subject_name
+FROM Subject
+WHERE faculty_code IS NULL
+   OR faculty_code NOT IN (SELECT faculty_code FROM Faculty);

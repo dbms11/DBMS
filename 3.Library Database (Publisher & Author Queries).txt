@@ -1,0 +1,98 @@
+-- Use the same database
+USE library;
+
+-- Make sure tables exist (optional safety)
+CREATE TABLE IF NOT EXISTS BOOK (
+  Book_ISBN VARCHAR(20) PRIMARY KEY,
+  Title VARCHAR(100) NOT NULL,
+  Publisher_Name VARCHAR(50),
+  Price DECIMAL(10,2) CHECK (Price > 0),
+  Date_Of_Publication DATE,
+  Book_Copy INT
+);
+
+
+
+CREATE TABLE IF NOT EXISTS BOOK_AUTHORS (
+  Book_ISBN VARCHAR(20),
+  Author_Name VARCHAR(50),
+  Author_City VARCHAR(50),
+  PRIMARY KEY (Book_ISBN, Author_Name),
+  FOREIGN KEY (Book_ISBN) REFERENCES BOOK(Book_ISBN)
+);
+
+
+
+-- Insert sample data (if not already inserted)
+INSERT IGNORE INTO BOOK VALUES
+('ISBN001', 'DBMS Concepts', 'Pearson', 550.00, '2020-01-10', 12),
+('ISBN002', 'Operating Systems', 'McGraw Hill', 600.00, '2021-05-20', 15),
+('ISBN003', 'Computer Networks', 'TMH', 500.00, '2022-07-15', 9),
+('ISBN004', 'Java Programming', 'Pearson', 650.00, '2023-02-11', 10),
+('ISBN005', 'Data Science', 'Wiley', 700.00, '2024-03-09', 14),
+('ISBN006', 'AI Fundamentals', 'Pearson', 800.00, '2024-04-10', 8);
+
+
+
+INSERT IGNORE INTO BOOK_AUTHORS VALUES
+('ISBN001', 'Korth', 'New York'),
+('ISBN002', 'Silberschatz', 'Boston'),
+('ISBN003', 'Tanenbaum', 'California'),
+('ISBN004', 'James Gosling', 'Toronto'),
+('ISBN005', 'Andrew Ng', 'California'),
+('ISBN005', 'Michael Jordan', 'California'),
+('ISBN006', 'Kumar', 'Delhi'),
+('ISBN006', 'Ketan', 'Pune'),
+('ISBN006', 'Kavita', 'Pune');
+
+
+
+-- i) Display publisher names by number of books published (ascending order)
+SELECT Publisher_Name, COUNT(*) AS Total_Books
+FROM BOOK
+GROUP BY Publisher_Name
+ORDER BY Total_Books ASC;
+
+
+
+-- ii) Get publishers who published at least one book written by author name like 'K%'
+SELECT DISTINCT B.Publisher_Name
+FROM BOOK B
+JOIN BOOK_AUTHORS A
+ON B.Book_ISBN = A.Book_ISBN
+WHERE A.Author_Name LIKE 'K%';
+
+
+
+-- iii) Get book name and author names where book has maximum authors
+SELECT B.Title, A.Author_Name
+FROM BOOK B
+JOIN BOOK_AUTHORS A
+ON B.Book_ISBN = A.Book_ISBN
+WHERE B.Book_ISBN = (
+  SELECT Book_ISBN
+  FROM BOOK_AUTHORS
+  GROUP BY Book_ISBN
+  ORDER BY COUNT(Author_Name) DESC
+  LIMIT 1
+);
+
+
+
+-- iv) Get publisher names sorted alphabetically by book titles
+SELECT DISTINCT B.Publisher_Name, B.Title
+FROM BOOK B
+ORDER BY B.Title ASC;
+
+
+
+-- v) Find number of books published between '2014-01-01' and current date
+SELECT COUNT(*) AS Total_Books_Published
+FROM BOOK
+WHERE Date_Of_Publication BETWEEN '2014-01-01' AND CURDATE();
+
+
+
+-- Optional checks
+SELECT * FROM BOOK;
+SELECT * FROM BOOK_AUTHORS;

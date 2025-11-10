@@ -1,0 +1,133 @@
+-- Create database and table for demo
+CREATE DATABASE IF NOT EXISTS company;
+USE company;
+
+CREATE TABLE Employee (
+  EmpID INT AUTO_INCREMENT PRIMARY KEY,
+  EmpName VARCHAR(50),
+  Department VARCHAR(30),
+  Salary DECIMAL(10,2)
+);
+
+-- Insert sample data
+INSERT INTO Employee (EmpName, Department, Salary)
+VALUES ('Ramesh', 'HR', 40000.00),
+       ('Suresh', 'IT', 55000.00),
+       ('Mahesh', 'Finance', 60000.00);
+
+
+2️⃣ Install MySQL Connector/J
+
+Download and place the MySQL JDBC driver (mysql-connector-j.jar) in your project’s lib/ folder.
+On Ubuntu you can also install via terminal:
+
+sudo apt install libmysql-java
+
+3️⃣ Java Program (JDBC Example)
+
+Save this file as JdbcDemo.java
+(You can copy–paste directly into your IDE or Ubuntu terminal using nano JdbcDemo.java)
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class JdbcDemo {
+    static final String URL = "jdbc:mysql://localhost:3306/company";
+    static final String USER = "root";
+    static final String PASSWORD = "your_mysql_password"; // 🔁 change this
+
+    public static void main(String[] args) {
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
+             Scanner sc = new Scanner(System.in)) {
+
+            System.out.println("Connected to MySQL successfully!");
+
+            while (true) {
+                System.out.println("\n1. Add Employee\n2. Edit Salary\n3. Delete Employee\n4. Display All\n5. Exit");
+                System.out.print("Enter choice: ");
+                int ch = sc.nextInt();
+                sc.nextLine(); // consume newline
+
+                switch (ch) {
+                    case 1 -> {
+                        System.out.print("Enter Name: ");
+                        String name = sc.nextLine();
+                        System.out.print("Enter Department: ");
+                        String dept = sc.nextLine();
+                        System.out.print("Enter Salary: ");
+                        double sal = sc.nextDouble();
+                        String insert = "INSERT INTO Employee (EmpName, Department, Salary) VALUES (?, ?, ?)";
+                        try (PreparedStatement ps = con.prepareStatement(insert)) {
+                            ps.setString(1, name);
+                            ps.setString(2, dept);
+                            ps.setDouble(3, sal);
+                            ps.executeUpdate();
+                            System.out.println("Employee added successfully!");
+                        }
+                    }
+
+                    case 2 -> {
+                        System.out.print("Enter EmpID to update: ");
+                        int id = sc.nextInt();
+                        System.out.print("Enter new Salary: ");
+                        double sal = sc.nextDouble();
+                        String update = "UPDATE Employee SET Salary = ? WHERE EmpID = ?";
+                        try (PreparedStatement ps = con.prepareStatement(update)) {
+                            ps.setDouble(1, sal);
+                            ps.setInt(2, id);
+                            int rows = ps.executeUpdate();
+                            System.out.println(rows > 0 ? "Updated successfully!" : "No record found.");
+                        }
+                    }
+
+                    case 3 -> {
+                        System.out.print("Enter EmpID to delete: ");
+                        int id = sc.nextInt();
+                        String del = "DELETE FROM Employee WHERE EmpID = ?";
+                        try (PreparedStatement ps = con.prepareStatement(del)) {
+                            ps.setInt(1, id);
+                            int rows = ps.executeUpdate();
+                            System.out.println(rows > 0 ? "Deleted successfully!" : "No record found.");
+                        }
+                    }
+
+                    case 4 -> {
+                        String sel = "SELECT * FROM Employee";
+                        try (Statement st = con.createStatement();
+                             ResultSet rs = st.executeQuery(sel)) {
+                            System.out.println("\nEmpID | Name | Department | Salary");
+                            while (rs.next()) {
+                                System.out.printf("%d | %s | %s | %.2f%n",
+                                        rs.getInt(1),
+                                        rs.getString(2),
+                                        rs.getString(3),
+                                        rs.getDouble(4));
+                            }
+                        }
+                    }
+
+                    case 5 -> {
+                        System.out.println("Goodbye!");
+                        return;
+                    }
+
+                    default -> System.out.println("Invalid choice!");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+🧩 4️⃣ Compile & Run in Ubuntu Terminal
+# compile
+javac -cp .:/usr/share/java/mysql-connector-j.jar JdbcDemo.java
+
+# run
+java -cp .:/usr/share/java/mysql-connector-j.jar JdbcDemo
+
+
+(If you downloaded the .jar manually, change the path accordingly.)
+

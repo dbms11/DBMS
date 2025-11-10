@@ -1,0 +1,91 @@
+-- Use the existing library database
+USE library;
+
+-- Make sure BOOK and BOOK_AUTHORS exist (optional safety)
+CREATE TABLE IF NOT EXISTS BOOK (
+  Book_ISBN VARCHAR(20) PRIMARY KEY,
+  Title VARCHAR(100) NOT NULL,
+  Publisher_Name VARCHAR(50),
+  Price DECIMAL(10,2) CHECK (Price > 0),
+  Date_Of_Publication DATE,
+  Book_Copy INT
+);
+
+
+
+CREATE TABLE IF NOT EXISTS BOOK_AUTHORS (
+  Book_ISBN VARCHAR(20),
+  Author_Name VARCHAR(50),
+  Author_City VARCHAR(50),
+  PRIMARY KEY (Book_ISBN, Author_Name),
+  FOREIGN KEY (Book_ISBN) REFERENCES BOOK(Book_ISBN)
+);
+
+
+
+-- Insert sample records (skip if already inserted)
+INSERT IGNORE INTO BOOK VALUES
+('ISBN001', 'DBMS Concepts', 'Pearson', 550.00, '2020-01-10', 12),
+('ISBN002', 'Operating Systems', 'McGraw Hill', 600.00, '2021-05-20', 15),
+('ISBN003', 'Computer Networks', 'TMH', 500.00, '2022-07-15', 9),
+('ISBN004', 'Java Programming', 'Pearson', 650.00, '2023-02-11', 10),
+('ISBN005', 'Data Science', 'Wiley', 700.00, '2024-03-09', 14);
+
+
+
+INSERT IGNORE INTO BOOK_AUTHORS VALUES
+('ISBN001', 'Korth', 'Pune'),
+('ISBN002', 'Silberschatz', 'Mumbai'),
+('ISBN003', 'Tanenbaum', 'Pune'),
+('ISBN004', 'James Gosling', 'Toronto'),
+('ISBN005', 'Andrew Ng', 'California'),
+('ISBN005', 'Michael Jordan', 'California');
+
+
+
+-- a) INNER JOIN: Book_ISBN, Title, Author_Name
+SELECT B.Book_ISBN, B.Title, A.Author_Name
+FROM BOOK B
+INNER JOIN BOOK_AUTHORS A
+ON B.Book_ISBN = A.Book_ISBN;
+
+
+
+-- b) LEFT OUTER JOIN: Show all books, even those without authors
+SELECT B.Book_ISBN, B.Title, B.Publisher_Name, A.Author_Name
+FROM BOOK B
+LEFT JOIN BOOK_AUTHORS A
+ON B.Book_ISBN = A.Book_ISBN;
+
+
+
+-- c) RIGHT OUTER JOIN: Show all authors, even those whose book info may be missing
+SELECT B.Book_ISBN, B.Title, B.Publisher_Name, A.Author_Name
+FROM BOOK B
+RIGHT JOIN BOOK_AUTHORS A
+ON B.Book_ISBN = A.Book_ISBN;
+
+
+
+-- d) Books whose authors live in 'Pune'
+SELECT B.Book_ISBN, B.Title
+FROM BOOK B
+JOIN BOOK_AUTHORS A
+ON B.Book_ISBN = A.Book_ISBN
+WHERE A.Author_City = 'Pune';
+
+
+
+-- e) Books written by more than 2 authors
+SELECT B.Book_ISBN, B.Title
+FROM BOOK B
+JOIN BOOK_AUTHORS A
+ON B.Book_ISBN = A.Book_ISBN
+GROUP BY B.Book_ISBN, B.Title
+HAVING COUNT(A.Author_Name) > 2;
+
+
+
+-- Verify outputs
+SELECT * FROM BOOK;
+SELECT * FROM BOOK_AUTHORS;

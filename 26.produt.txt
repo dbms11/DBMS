@@ -1,0 +1,47 @@
+-- 1. Create database and use it
+CREATE DATABASE IF NOT EXISTS shopDB;
+USE shopDB;
+
+-- 2. Create PRODUCT table
+DROP TABLE IF EXISTS PRODUCT;
+CREATE TABLE PRODUCT (
+    P_ID INT PRIMARY KEY,
+    Model VARCHAR(50),
+    Price DECIMAL(10,2),
+    Name VARCHAR(100),
+    Date_of_Manufacture DATE,
+    Date_of_Expiry DATE
+);
+
+-- 3. Insert sample data
+INSERT INTO PRODUCT (P_ID, Model, Price, Name, Date_of_Manufacture, Date_of_Expiry) VALUES
+(1, 'M101', 600, 'ProductA', '2019-05-10', '2025-05-09'),
+(2, 'M102', 450, 'ProductB', '2017-03-15', '2024-03-14'),
+(3, 'M103', 8000, 'ProductC', '2020-11-01', '2026-10-31'),
+(4, 'M104', 12000, 'ProductD', '2022-01-20', '2027-01-19'),
+(5, 'M105', 5500, 'ProductE', '2018-06-25', '2023-06-24'),
+(6, 'M106', 300, 'ProductF', '2021-07-15', '2024-07-14');
+
+-- 4. (a) Name and date_of_expiry for products with price > 500
+SELECT 'Query (a):' AS Description;
+SELECT Name, Date_of_Expiry
+FROM PRODUCT
+WHERE Price > 500;
+
+-- 5. (b) Name, P_ID, and Price for products manufactured after 01-01-2018
+SELECT 'Query (b):' AS Description;
+SELECT Name, P_ID, Price
+FROM PRODUCT
+WHERE Date_of_Manufacture > '2018-01-01';
+
+-- 6. (c) Name, Date_of_Manufacture, Date_of_Expiry for products with price between 5000 and 10000
+SELECT 'Query (c):' AS Description;
+SELECT Name, Date_of_Manufacture, Date_of_Expiry
+FROM PRODUCT
+WHERE Price BETWEEN 5000 AND 10000;
+
+-- 7. (d) Name, P_ID, Model for products expiring after 2 months from today
+SELECT 'Query (d):' AS Description;
+SELECT Name, P_ID, Model
+FROM PRODUCT
+WHERE Date_of_Expiry > DATE_ADD(CURDATE(), INTERVAL 2 MONTH);
