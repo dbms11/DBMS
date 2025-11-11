@@ -1,0 +1,41 @@
+1️⃣ MySQL
+
+MySQL is a relational database management system (RDBMS).
+
+It stores data in tables with rows and columns.
+
+Uses SQL (Structured Query Language) for queries.
+
+Example: SELECT * FROM students;
+
+2️⃣ MongoDB
+
+MongoDB is a NoSQL database (document-oriented).
+
+Stores data in collections and documents (JSON-like format), not tables.
+
+Schema is flexible, so fields can vary between documents.
+
+Example: db.students.find({})
+
+3️⃣ PL/SQL
+
+PL/SQL is Procedural Language extensions to SQL, used in Oracle databases.
+
+Allows writing procedures, functions, loops, and triggers in addition to SQL queries.
+
+Example:
+
+BEGIN
+   DBMS_OUTPUT.PUT_LINE('Hello World');
+END;
+
+4️⃣ Difference between SQL (MySQL) and MongoDB
+Feature	                   MySQL (SQL)	    MongoDB (NoSQL)
+Data Storage	       Tables (rows & columns)   	Collections & documents
+Schema           	Fixed            	Flexible
+Query Language	        SQL               	MongoDB Query Language (MQL)
+Transactions	      ACID support	Limited (supports multi-doc in latest versions)
+Relationships	     Supports joins	  No joins (denormalization / embedding used)
+
+
